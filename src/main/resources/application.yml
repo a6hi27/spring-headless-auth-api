@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  error:
+    include-message: always # Helps with debugging REST errors
+
+spring:
+  application:
+    name: headless-auth-api
+
+  # Mail Configuration
+  mail:
+    host: smtp.gmail.com # Or your preferred SMTP provider
+    port: 587
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# Our Custom Domain Properties
+api:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:a-very-long-fallback-secret-key-change-in-prod}
+      expiration-ms: 86400000 # 24 hours
+    otp:
+      expiration-minutes: 8
+      subject: "Your Authentication Code"
+      from-email: "noreply@yourdomain.com"
