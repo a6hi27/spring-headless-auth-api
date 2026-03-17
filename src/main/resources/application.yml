@@ -24,8 +24,8 @@ spring:
 api:
   security:
     jwt:
-      secret: ${JWT_SECRET:a-very-long-fallback-secret-key-change-in-prod}
-      expiration-ms: 86400000 # 24 hours
+      secret-key: ${JWT_SECRET:a-very-long-fallback-secret-key-change-in-prod}
+      expiration: 86400000 # 24 hours
     otp:
       expiration-minutes: 8
       subject: "Your Authentication Code"

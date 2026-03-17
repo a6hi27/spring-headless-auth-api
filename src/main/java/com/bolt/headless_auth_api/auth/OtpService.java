@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,18 +30,18 @@ public class OtpService {
         // 2. Hash the raw OTP using passwordEncoder.encode()
         String hashedOtp = passwordEncoder.encode(rawOtp);
         // 3. Save to temporaryCache (Key: email, Value: hashed OTP)
-        cacheManager.getCache("otpCache").put(email, hashedOtp);
+        Cache otpCache = Objects.requireNonNull(cacheManager.getCache("otpCache"), "CRITICAL: 'otpCache' is missing!");
+        otpCache.put(email, hashedOtp);
         // 4. Call emailService.sendOtpEmail(email, rawOtp)
         emailService.sendOtpEmail(email, rawOtp);
     }
 
     public boolean validateOtp(String email, String otp) {
-        Cache otpCache = cacheManager.getCache("otpCache");
-        String hashedOtp = otpCache.get(email, String.class);
+        Cache otpCache = Objects.requireNonNull(cacheManager.getCache("otpCache"), "CRITICAL: 'otpCache' is missing!");
 
+        String hashedOtp = otpCache.get(email, String.class);
         if (hashedOtp == null)
             return false;
-
         boolean isMatch = passwordEncoder.matches(otp, hashedOtp);
 
         if (isMatch) {
