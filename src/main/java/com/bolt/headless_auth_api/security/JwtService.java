@@ -26,7 +26,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload();
+            return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload();
     }
 
     public String extractEmail(String token) {

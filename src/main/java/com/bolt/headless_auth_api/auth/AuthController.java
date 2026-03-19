@@ -1,5 +1,6 @@
 package com.bolt.headless_auth_api.auth;
 
+import com.bolt.headless_auth_api.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     private final OtpService otpService;
+    private final JwtService jwtService;
 
     @PostMapping("/generate-otp")
     public ResponseEntity<String> generateOtp(
@@ -27,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/validate-otp")
-    public ResponseEntity<String> validateOtp(
+    public ResponseEntity<?> validateOtp(
             @Valid @RequestBody ValidateOtpRequest request) {
 
         // Call the OtpService to validate the OTP.
@@ -36,9 +38,10 @@ public class AuthController {
         boolean isValid = otpService.validateOtp(email, otp);
 
         // If it returns true, return a 200 OK ("OTP is valid").
-        if (isValid)
-            return ResponseEntity.ok("OTP is valid");
-
+        if (isValid) {
+            AuthResponse authResponse = new AuthResponse(jwtService.generateToken(email));
+            return ResponseEntity.ok(authResponse);
+        }
         // If it returns false, return a 401 Unauthorized ("Invalid or expired OTP").
         return new ResponseEntity<>("Invalid or expired OTP", HttpStatus.UNAUTHORIZED);
     }
