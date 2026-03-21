@@ -1,6 +1,8 @@
 package com.bolt.headless_auth_api.auth;
 
 import com.bolt.headless_auth_api.security.JwtService;
+import com.bolt.headless_auth_api.security.RateLimitingService;
+import io.github.bucket4j.Bucket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ public class AuthController {
 
     private final OtpService otpService;
     private final JwtService jwtService;
+    private final RateLimitingService rateLimitingService;
 
     @PostMapping("/generate-otp")
     public ResponseEntity<String> generateOtp(
@@ -22,10 +25,14 @@ public class AuthController {
 
         // Call the OtpService to generate and send the OTP using the email from the request
         String email = request.email();
-        otpService.generateAndSendOtp(email);
-
-        // Return a 200 OK success message
-        return ResponseEntity.ok("OTP generated and sent successfully to " + request.email());
+        Bucket bucket = rateLimitingService.resolveBucket(email);
+        if (bucket.tryConsume(1)) {
+            otpService.generateAndSendOtp(email);
+            // Return a 200 OK success message
+            return ResponseEntity.ok("OTP generated and sent successfully to " + request.email());
+        }
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("Too many requests. Kindly wait 5 minutes before " +
+                "trying again.");
     }
 
     @PostMapping("/validate-otp")

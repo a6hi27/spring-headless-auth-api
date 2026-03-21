@@ -3,7 +3,6 @@ package com.bolt.headless_auth_api.security;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.BandwidthBuilder;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -18,7 +17,8 @@ public class RateLimitingService {
 
     // 1. The Bucket Factory
     public Bucket resolveBucket(String email) {
-        return cache.computeIfAbsent(email, this::newBucket);
+        String cleanEmail = email.trim().toLowerCase();
+        return cache.computeIfAbsent(cleanEmail, this::newBucket);
     }
 
     // 2. The Engine that defines the rules
