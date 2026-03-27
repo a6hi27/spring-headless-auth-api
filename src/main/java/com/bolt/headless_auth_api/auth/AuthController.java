@@ -2,6 +2,7 @@ package com.bolt.headless_auth_api.auth;
 
 import com.bolt.headless_auth_api.security.JwtService;
 import com.bolt.headless_auth_api.security.RateLimitingService;
+import com.bolt.headless_auth_api.user.UserService;
 import io.github.bucket4j.Bucket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ public class AuthController {
 
     private final OtpService otpService;
     private final JwtService jwtService;
+    private final UserService userService;
     private final RateLimitingService rateLimitingService;
 
     @PostMapping("/generate-otp")
@@ -46,6 +48,7 @@ public class AuthController {
 
         // If it returns true, return a 200 OK ("OTP is valid").
         if (isValid) {
+            userService.getOrCreateUser(email);
             AuthResponse authResponse = new AuthResponse(jwtService.generateToken(email));
             return ResponseEntity.ok(authResponse);
         }

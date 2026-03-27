@@ -6,6 +6,18 @@ server:
 spring:
   application:
     name: headless-auth-api
+  datasource:
+    url: jdbc:mysql://localhost:3306/headless_auth_db?createDatabaseIfNotExist=true
+    username: root
+    password: # Change this to your local MySQL root password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
   # Mail Configuration
   mail:
