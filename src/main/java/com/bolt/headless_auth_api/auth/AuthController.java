@@ -4,6 +4,7 @@ import com.bolt.headless_auth_api.security.JwtService;
 import com.bolt.headless_auth_api.security.RateLimitingService;
 import com.bolt.headless_auth_api.user.UserService;
 import io.github.bucket4j.Bucket;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,11 @@ public class AuthController {
     private final UserService userService;
     private final RateLimitingService rateLimitingService;
 
+    @Operation(
+            summary = "Generate an OTP",
+            description = "Generates a secure 6-digit OTP and sends it to the provided email address.",
+            tags = {"Authentication"}
+    )
     @PostMapping("/generate-otp")
     public ResponseEntity<String> generateOtp(
             @Valid @RequestBody GenerateOtpRequest request) {
@@ -37,6 +43,11 @@ public class AuthController {
                 "trying again.");
     }
 
+    @Operation(
+            summary = "Validate an OTP",
+            description = "Validates the provided 6-digit OTP. Upon successful validation, automatically registers new users and returns a secure JWT (JSON Web Token) to access protected endpoints.",
+            tags = {"Authentication"}
+    )
     @PostMapping("/validate-otp")
     public ResponseEntity<?> validateOtp(
             @Valid @RequestBody ValidateOtpRequest request) {

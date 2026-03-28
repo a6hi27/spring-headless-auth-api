@@ -33,7 +33,9 @@ public class SecurityConfig {
 
                 // 2. Configure exactly which endpoints are public and which are private
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/swagger-ui.html"
+                                , "/v3/api-docs/**")
+                        .permitAll()
                         .anyRequest().authenticated() // Lock down everything else
                 )
 
