@@ -11,6 +11,9 @@ spring:
     username: root
     password: # Change this to your local MySQL root password
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
   jpa:
     hibernate:
       ddl-auto: update
