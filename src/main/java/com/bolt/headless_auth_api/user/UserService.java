@@ -23,4 +23,10 @@ public class UserService {
         User user = userOptional.orElseThrow(() -> new RuntimeException("User not found in database"));
         return new UserProfileResponse(user.getEmail(), user.getRole());
     }
+
+    public User getUserByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        User user = userOptional.orElseThrow(() -> new RuntimeException("User not found in database"));
+        return user;
+    }
 }
