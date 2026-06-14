@@ -10,7 +10,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    public void getOrCreateUser(String email) {
+    public void createUserIfAbsent(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             User newUser = User.builder().email(email).build();

@@ -59,7 +59,7 @@ public class AuthController {
 
         // If it returns true, return a 200 OK ("OTP is valid").
         if (isValid) {
-            userService.getOrCreateUser(email);
+            userService.createUserIfAbsent(email);
             AuthResponse authResponse = new AuthResponse(jwtService.generateToken(email));
             return ResponseEntity.ok(authResponse);
         }
