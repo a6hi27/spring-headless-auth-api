@@ -17,4 +17,10 @@ public class UserService {
             userRepository.save(newUser);
         }
     }
+
+    public UserProfileResponse getUserProfileResponse(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        User user = userOptional.orElseThrow(() -> new RuntimeException("User not found in database"));
+        return new UserProfileResponse(user.getEmail(), user.getRole());
+    }
 }
