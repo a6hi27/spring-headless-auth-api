@@ -41,6 +41,8 @@ api:
     jwt:
       secret-key: ${JWT_SECRET:a-very-long-fallback-secret-key-change-in-prod}
       expiration: 86400000 # 24 hours
+      refresh-token:
+        expiration: 2592000000
     otp:
       expiration-minutes: 8
       subject: "Your Authentication Code"
