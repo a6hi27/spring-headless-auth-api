@@ -1,5 +1,6 @@
 package com.bolt.headless_auth_api.auth;
 
+import com.bolt.headless_auth_api.exception.TokenRefreshException;
 import com.bolt.headless_auth_api.user.User;
 import com.bolt.headless_auth_api.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,16 @@ public class RefreshTokenService {
 
         RefreshToken refreshToken = new RefreshToken(user, token, expiryDate, revoked);
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    public RefreshToken verifyExpiration(RefreshToken token) {
+        Instant expiryDate = token.getExpiryDate();
+        if (Instant.now().isAfter(expiryDate)) {
+            refreshTokenRepository.delete(token);
+            throw new TokenRefreshException("The refresh token has expired! Please login again!");
+        }
+        if (token.isRevoked())
+            throw new TokenRefreshException("The refresh token is revoked!");
+        return token;
     }
 }
