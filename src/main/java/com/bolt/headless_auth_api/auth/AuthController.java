@@ -20,6 +20,7 @@ public class AuthController {
     private final OtpService otpService;
     private final JwtService jwtService;
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
     private final RateLimitingService rateLimitingService;
 
     @Operation(
@@ -60,7 +61,9 @@ public class AuthController {
         // If it returns true, return a 200 OK ("OTP is valid").
         if (isValid) {
             userService.createUserIfAbsent(email);
-            AuthResponse authResponse = new AuthResponse(jwtService.generateToken(email));
+            String jwtToken = jwtService.generateToken(email);
+            String refreshToken = refreshTokenService.createRefreshToken(email).getToken();
+            AuthResponse authResponse = new AuthResponse(jwtToken, refreshToken);
             return ResponseEntity.ok(authResponse);
         }
         // If it returns false, return a 401 Unauthorized ("Invalid or expired OTP").
