@@ -69,4 +69,14 @@ public class AuthController {
         // If it returns false, return a 401 Unauthorized ("Invalid or expired OTP").
         return new ResponseEntity<>("Invalid or expired OTP", HttpStatus.UNAUTHORIZED);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        String refreshTokenString = refreshTokenRequest.refreshToken();
+        RefreshToken refreshToken = refreshTokenService.findByToken(refreshTokenString);
+        RefreshToken validRefreshToken = refreshTokenService.verifyExpiration(refreshToken);
+        String email = validRefreshToken.getUser().getEmail();
+        String jwtToken = jwtService.generateToken(email);
+        return new ResponseEntity<>(new AuthResponse(jwtToken, validRefreshToken.getToken()), HttpStatus.OK);
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,5 +39,12 @@ public class RefreshTokenService {
         if (token.isRevoked())
             throw new TokenRefreshException("The refresh token is revoked!");
         return token;
+    }
+
+    public RefreshToken findByToken(String refreshTokenString) {
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByToken(refreshTokenString);
+        RefreshToken refreshToken = refreshTokenOptional.orElseThrow(() -> new TokenRefreshException("Token not found" +
+                " in database"));
+        return refreshToken;
     }
 }
