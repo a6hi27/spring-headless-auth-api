@@ -79,4 +79,11 @@ public class AuthController {
         String jwtToken = jwtService.generateToken(email);
         return new ResponseEntity<>(new AuthResponse(jwtToken, validRefreshToken.getToken()), HttpStatus.OK);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        String refreshTokenString = refreshTokenRequest.refreshToken();
+        refreshTokenService.deleteRefreshToken(refreshTokenString);
+        return new ResponseEntity<>("Successfully logged out", HttpStatus.OK);
+    }
 }

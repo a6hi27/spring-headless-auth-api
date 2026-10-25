@@ -30,6 +30,11 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
+    public void deleteRefreshToken(String refreshTokenString){
+        RefreshToken refreshToken = findByToken(refreshTokenString);
+        refreshTokenRepository.delete(refreshToken);
+    }
+
     public RefreshToken verifyExpiration(RefreshToken token) {
         Instant expiryDate = token.getExpiryDate();
         if (Instant.now().isAfter(expiryDate)) {
